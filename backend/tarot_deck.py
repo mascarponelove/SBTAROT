@@ -6,6 +6,7 @@ class TarotDeck:
     """
     Enhanced Tarot Deck with file system integration.
     Handles images and contextual meanings from Word documents.
+    Deck is randomized on creation for robust shuffling.
     """
     
     def __init__(self, assets_path="assets"):
@@ -28,6 +29,11 @@ class TarotDeck:
         
         # Build full deck structure
         self.deck = self._build_deck()
+        
+        # CRITICAL: Randomize the base deck order immediately
+        random.shuffle(self.deck)
+        
+        # Current deck starts as a copy of the randomized deck
         self.current_deck = self.deck.copy()
     
     def _build_deck(self):
@@ -60,13 +66,19 @@ class TarotDeck:
         return deck
     
     def shuffle(self):
-        """Fisher-Yates shuffle implementation."""
+        """
+        Fisher-Yates shuffle implementation.
+        Resets to full deck and randomizes order.
+        """
         self.current_deck = self.deck.copy()
         random.shuffle(self.current_deck)
         return {"status": "shuffled", "cards_remaining": len(self.current_deck)}
     
     def draw_card(self):
-        """Draw one card from deck."""
+        """
+        Draw one card from deck.
+        Card is removed and cannot be drawn again until reset/shuffle.
+        """
         if not self.current_deck:
             return None
         return self.current_deck.pop()
@@ -105,7 +117,6 @@ class TarotDeck:
                         category = cells[0].text.strip()
                         content = cells[1].text.strip()
                         
-                        # Store the data
                         if category and content:
                             card_data[category] = content
                 
@@ -118,7 +129,7 @@ class TarotDeck:
                     if key.lower() == context.lower():
                         return card_data[key]
                 
-                # Try partial match (e.g., "Essence" matches "Essence/Prediction")
+                # Try partial match
                 for key in card_data.keys():
                     if context.lower() in key.lower() or key.lower() in context.lower():
                         return card_data[key]
@@ -171,6 +182,10 @@ class TarotDeck:
             return {"error": str(e)}
     
     def reset(self):
-        """Reset deck to full 78 cards."""
+        """
+        Reset deck to full 78 cards with new random order.
+        This ensures every reset gives a fresh random arrangement.
+        """
         self.current_deck = self.deck.copy()
+        random.shuffle(self.current_deck)
         return {"status": "reset", "cards_remaining": len(self.current_deck)}
