@@ -71,13 +71,15 @@ class TarotDeck:
             return None
         return self.current_deck.pop()
     
-    def extract_meaning(self, card, context="General"):
+    def extract_meaning(self, card, context="Soul"):
         """
         Extract meaning from Word document based on context.
+        Reads 2-column table format.
         
         Args:
             card (dict): Card dictionary from deck
-            context (str): Context type (General, Love, Career, Finance, Health, Spiritual)
+            context (str): Context type (Soul, Essence/Prediction, Past, Present, 
+                          Future, Health, Profession, Relationship, Guidance)
         
         Returns:
             str: Contextual meaning
@@ -85,25 +87,88 @@ class TarotDeck:
         meaning_file = self.assets_path / card["meaning_path"].replace("assets/", "")
         
         if not meaning_file.exists():
-            return f"⚠️ Meaning file not found: {card['display_name']}. Please add the Word document."
+            return f"⚠️ Meaning file not found: {card['display_name']}. Please add the Word document at: {card['meaning_path']}"
         
         try:
             doc = Document(meaning_file)
             
-            # Parse table (assuming first table contains meanings)
+            # Parse 2-column table
             if doc.tables:
                 table = doc.tables[0]
+                
+                # Store all card data
+                card_data = {}
+                
                 for row in table.rows:
                     cells = row.cells
                     if len(cells) >= 2:
-                        row_context = cells[0].text.strip()
-                        if row_context.lower() == context.lower():
-                            return cells[1].text.strip()
+                        category = cells[0].text.strip()
+                        content = cells[1].text.strip()
+                        
+                        # Store the data
+                        if category and content:
+                            card_data[category] = content
+                
+                # Return requested context (exact match first)
+                if context in card_data:
+                    return card_data[context]
+                
+                # Try case-insensitive match
+                for key in card_data.keys():
+                    if key.lower() == context.lower():
+                        return card_data[key]
+                
+                # Try partial match (e.g., "Essence" matches "Essence/Prediction")
+                for key in card_data.keys():
+                    if context.lower() in key.lower() or key.lower() in context.lower():
+                        return card_data[key]
+                
+                # If still not found, list available categories
+                available = ", ".join(card_data.keys())
+                return f"Context '{context}' not found. Available categories: {available}"
             
-            return f"Context '{context}' not found in meaning file."
+            return "No table found in Word document. Please ensure your .docx file contains a table."
         
         except Exception as e:
-            return f"Error reading meaning: {str(e)}"
+            return f"Error reading meaning file: {str(e)}"
+    
+    def get_all_card_data(self, card):
+        """
+        Get all data from card's Word document (for displaying Yes/No, +/-, etc.)
+        
+        Args:
+            card (dict): Card dictionary from deck
+        
+        Returns:
+            dict: All card data from Word document
+        """
+        meaning_file = self.assets_path / card["meaning_path"].replace("assets/", "")
+        
+        if not meaning_file.exists():
+            return {}
+        
+        try:
+            doc = Document(meaning_file)
+            
+            if doc.tables:
+                table = doc.tables[0]
+                card_data = {}
+                
+                for row in table.rows:
+                    cells = row.cells
+                    if len(cells) >= 2:
+                        category = cells[0].text.strip()
+                        content = cells[1].text.strip()
+                        
+                        if category and content:
+                            card_data[category] = content
+                
+                return card_data
+            
+            return {}
+        
+        except Exception as e:
+            return {"error": str(e)}
     
     def reset(self):
         """Reset deck to full 78 cards."""
