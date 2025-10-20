@@ -149,27 +149,43 @@ drawBtn.addEventListener('click', async () => {
             }, 100);
             
         } else {
-            // Draw 3-card spread
+            // Draw 3-card spread with better error handling
             statusDiv.textContent = '✨ Drawing your Past, Present, and Future...';
             
             const cards = [];
+            const positions = ['Past', 'Present', 'Future'];
+            
+            // Draw 3 cards sequentially with individual error handling
             for (let i = 0; i < 3; i++) {
-                const response = await fetch(`${API_URL}/draw`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json' 
-                    },
-                    body: JSON.stringify({ context })
-                });
-                
-                if (!response.ok) {
-                    const error = await response.json();
-                    statusDiv.textContent = `❌ ${error.error}`;
-                    return;
+                try {
+                    const response = await fetch(`${API_URL}/draw`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json' 
+                        },
+                        body: JSON.stringify({ context })
+                    });
+                    
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(`${error.error || 'Failed to draw card'}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log(`Drew ${positions[i]} card:`, data.card.display_name, `- ${data.cards_remaining} cards left`);
+                    cards.push(data);
+                    
+                } catch (drawError) {
+                    statusDiv.textContent = `❌ Error drawing ${positions[i]} card: ${drawError.message}`;
+                    console.error(`Error drawing card ${i + 1}:`, drawError);
+                    return; // Stop drawing if any card fails
                 }
-                
-                const data = await response.json();
-                cards.push(data);
+            }
+            
+            // Verify we got exactly 3 cards
+            if (cards.length !== 3) {
+                statusDiv.textContent = `❌ Error: Only drew ${cards.length} cards instead of 3. Please try again.`;
+                return;
             }
             
             // Display the 3-card spread
@@ -178,7 +194,18 @@ drawBtn.addEventListener('click', async () => {
             displayCard(cards[2], futureElements, 'Future');
             
             threeCardDisplay.classList.remove('hidden');
-            statusDiv.textContent = `🔮 Your spread is revealed. ${cards[2].cards_remaining} cards remain in the deck.`;
+            
+            // Show final card count from the last draw
+            const finalCardCount = cards[2].cards_remaining;
+            statusDiv.textContent = `🔮 Your spread is revealed. ${finalCardCount} cards remain in the deck.`;
+            
+            // Verification log
+            console.log('Spread complete:', {
+                drewCards: 3,
+                expectedRemaining: 75,
+                actualRemaining: finalCardCount,
+                cardsMatch: finalCardCount === 75
+            });
             
             // Smooth scroll
             setTimeout(() => {
@@ -229,6 +256,12 @@ resetBtn.addEventListener('click', async () => {
 
 // Display a single card
 function displayCard(data, elements, position) {
+    // Verify data exists
+    if (!data || !data.card) {
+        console.error(`No data for ${position} card`);
+        return;
+    }
+    
     // Display card name
     elements.name.textContent = data.card.display_name;
     
