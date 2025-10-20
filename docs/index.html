@@ -1,1 +1,73 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBTATROT - Tarot Card Reading</title>
+    
+    <!-- Meta Tags for SEO and Social Sharing -->
+    <meta name="description" content="Rider-Waite-Smith tarot card readings with detailed interpretations for Soul, Past, Present, Future, Health, Profession, and Relationships.">
+    <meta property="og:title" content="SBTATROT - Tarot Card Reading">
+    <meta property="og:description" content="Professional tarot readings with contextual interpretations">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔮 SBTATROT</h1>
+            <p class="subtitle">Rider-Waite-Smith Tarot Reading</p>
+        </header>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="context">Select Reading Context:</label>
+                <select id="context">
+                    <option value="Soul">Soul Reading</option>
+                    <option value="Essence/Prediction">Essence/Prediction</option>
+                    <option value="Example">Example</option>
+                    <option value="Past">Past</option>
+                    <option value="Present">Present</option>
+                    <option value="Future">Future</option>
+                    <option value="Health">Health</option>
+                    <option value="Profession">Profession</option>
+                    <option value="Relationship">Relationship</option>
+                    <option value="Guidance">Guidance</option>
+                </select>
+            </div>
+            
+            <div class="button-group">
+                <button id="shuffleBtn" class="btn btn-primary">🎴 Shuffle Deck</button>
+                <button id="drawBtn" class="btn btn-secondary">✨ Draw Card</button>
+                <button id="resetBtn" class="btn btn-tertiary">🔄 Reset</button>
+            </div>
+        </div>
+        
+        <div id="status" class="status"></div>
+        
+        <div id="cardDisplay" class="card-display hidden">
+            <div class="card-container">
+                <!-- Card Metadata (Yes/No, +/-) -->
+                <div id="cardMetadata" class="card-metadata"></div>
+                
+                <h2 id="cardName" class="card-name"></h2>
+                
+                <div class="card-image-wrapper">
+                    <img id="cardImage" alt="Tarot Card" class="card-image">
+                </div>
+                
+                <div id="cardMeaning" class="meaning-box"></div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2025 SBTATROT | Rider-Waite-Smith Tarot Deck</p>
+            <p class="footer-note">For guidance and entertainment purposes</p>
+        </footer>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
