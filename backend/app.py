@@ -1,7 +1,7 @@
 import os
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
-from tarot_deck import TarotDeck
+from backend.tarot_deck import TarotDeck
 
 app = Flask(__name__, static_folder='../assets', static_url_path='/assets')
 
