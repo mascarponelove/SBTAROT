@@ -1,4 +1,15 @@
-// Configuration - Backend serves assets from root
+// Draw cards (1 or 3 based on selection)
+drawBtn.addEventListener('click', async () => {
+    try {
+        const context = contextSelect.value;
+        const isSingleCard = singleCardRadio.checked;
+        
+        drawBtn.disabled = true;
+        drawBtn.innerHTML = '⏳ Revealing...';
+        
+        if (isSingleCard) {
+            // Draw single card
+            statusDiv.textContent = '// Configuration
 const API_URL = 'https://sbtatrot-backend.onrender.com/api';
 
 // DOM Elements
@@ -7,23 +18,72 @@ const drawBtn = document.getElementById('drawBtn');
 const resetBtn = document.getElementById('resetBtn');
 const contextSelect = document.getElementById('context');
 const statusDiv = document.getElementById('status');
-const cardDisplay = document.getElementById('cardDisplay');
-const cardName = document.getElementById('cardName');
-const cardImage = document.getElementById('cardImage');
-const cardMeaning = document.getElementById('cardMeaning');
-const cardMetadata = document.getElementById('cardMetadata');
+const shuffleAnimation = document.getElementById('shuffleAnimation');
+const singleCardDisplay = document.getElementById('singleCardDisplay');
+const threeCardDisplay = document.getElementById('threeCardDisplay');
+
+// Radio buttons
+const singleCardRadio = document.getElementById('singleCard');
+const threeCardRadio = document.getElementById('threeCard');
+
+// Single card elements
+const singleElements = {
+    name: document.getElementById('singleName'),
+    image: document.getElementById('singleImage'),
+    meaning: document.getElementById('singleMeaning'),
+    metadata: document.getElementById('singleMetadata')
+};
+
+// Card elements for 3-card spread
+const pastElements = {
+    name: document.getElementById('pastName'),
+    image: document.getElementById('pastImage'),
+    meaning: document.getElementById('pastMeaning'),
+    metadata: document.getElementById('pastMetadata')
+};
+
+const presentElements = {
+    name: document.getElementById('presentName'),
+    image: document.getElementById('presentImage'),
+    meaning: document.getElementById('presentMeaning'),
+    metadata: document.getElementById('presentMetadata')
+};
+
+const futureElements = {
+    name: document.getElementById('futureName'),
+    image: document.getElementById('futureImage'),
+    meaning: document.getElementById('futureMeaning'),
+    metadata: document.getElementById('futureMetadata')
+};
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    statusDiv.textContent = '👋 Welcome! Click "Shuffle Deck" to begin your reading.';
+    statusDiv.textContent = '🌙 Welcome to the mystical realm. Click "Shuffle Deck" to begin your journey...';
+    checkBackendStatus();
+    updateDrawButtonText();
 });
 
-// Shuffle deck
+// Update button text based on spread type selection
+function updateDrawButtonText() {
+    const isSingleCard = singleCardRadio.checked;
+    drawBtn.innerHTML = isSingleCard ? '✨ Draw Card' : '✨ Draw Spread';
+}
+
+// Add event listeners to radio buttons
+singleCardRadio.addEventListener('change', updateDrawButtonText);
+threeCardRadio.addEventListener('change', updateDrawButtonText);
+
+// Shuffle deck with animation
 shuffleBtn.addEventListener('click', async () => {
     try {
         shuffleBtn.disabled = true;
         shuffleBtn.innerHTML = '🔄 Shuffling...';
-        statusDiv.textContent = '🔄 Shuffling deck...';
+        
+        // Show shuffle animation
+        shuffleAnimation.classList.add('active');
+        singleCardDisplay.classList.add('hidden');
+        threeCardDisplay.classList.add('hidden');
+        statusDiv.textContent = '🌀 Shuffling the cosmic deck...';
         
         const response = await fetch(`${API_URL}/shuffle`, { 
             method: 'POST',
@@ -37,70 +97,112 @@ shuffleBtn.addEventListener('click', async () => {
         }
         
         const data = await response.json();
-        statusDiv.textContent = `✅ Deck shuffled! ${data.cards_remaining} cards ready for reading.`;
-        cardDisplay.classList.add('hidden');
+        
+        // Keep animation visible for 2 seconds
+        setTimeout(() => {
+            shuffleAnimation.classList.remove('active');
+            statusDiv.textContent = `✨ The cards are ready. ${data.cards_remaining} cards await your question...`;
+        }, 2000);
         
     } catch (error) {
-        statusDiv.textContent = `❌ Error: ${error.message}. Backend may be sleeping (first load takes 30 sec).`;
+        shuffleAnimation.classList.remove('active');
+        statusDiv.textContent = `❌ The cosmic forces are misaligned: ${error.message}`;
         console.error('Shuffle error:', error);
     } finally {
-        shuffleBtn.disabled = false;
-        shuffleBtn.innerHTML = '🎴 Shuffle Deck';
+        setTimeout(() => {
+            shuffleBtn.disabled = false;
+            shuffleBtn.innerHTML = '🎴 Shuffle Deck';
+        }, 2000);
     }
 });
 
-// Draw card
+// Draw cards (1 or 3 based on selection)
 drawBtn.addEventListener('click', async () => {
     try {
         const context = contextSelect.value;
+        const isSingleCard = singleCardRadio.checked;
         
         drawBtn.disabled = true;
-        drawBtn.innerHTML = '⏳ Drawing...';
-        statusDiv.textContent = '✨ Drawing your card...';
+        drawBtn.innerHTML = '⏳ Revealing...';
         
-        const response = await fetch(`${API_URL}/draw`, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify({ context })
-        });
+        // Hide both displays first
+        singleCardDisplay.classList.add('hidden');
+        threeCardDisplay.classList.add('hidden');
         
-        if (!response.ok) {
-            const error = await response.json();
-            statusDiv.textContent = `❌ ${error.error}`;
-            return;
+        if (isSingleCard) {
+            // Draw single card
+            statusDiv.textContent = '✨ Drawing your card...';
+            
+            const response = await fetch(`${API_URL}/draw`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify({ context })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                statusDiv.textContent = `❌ ${error.error}`;
+                return;
+            }
+            
+            const data = await response.json();
+            
+            // Display single card
+            displayCard(data, singleElements, 'Your Card');
+            singleCardDisplay.classList.remove('hidden');
+            statusDiv.textContent = `🔮 Your card is revealed. ${data.cards_remaining} cards remain in the deck.`;
+            
+            // Smooth scroll
+            setTimeout(() => {
+                singleCardDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+            
+        } else {
+            // Draw 3-card spread
+            statusDiv.textContent = '✨ Drawing your Past, Present, and Future...';
+            
+            const cards = [];
+            for (let i = 0; i < 3; i++) {
+                const response = await fetch(`${API_URL}/draw`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify({ context })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    statusDiv.textContent = `❌ ${error.error}`;
+                    return;
+                }
+                
+                const data = await response.json();
+                cards.push(data);
+            }
+            
+            // Display the 3-card spread
+            displayCard(cards[0], pastElements, 'Past');
+            displayCard(cards[1], presentElements, 'Present');
+            displayCard(cards[2], futureElements, 'Future');
+            
+            threeCardDisplay.classList.remove('hidden');
+            statusDiv.textContent = `🔮 Your spread is revealed. ${cards[2].cards_remaining} cards remain in the deck.`;
+            
+            // Smooth scroll
+            setTimeout(() => {
+                threeCardDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
         }
         
-        const data = await response.json();
-        
-        // Display card name
-        cardName.textContent = data.card.display_name;
-        
-        // Display card image - Load from backend
-        cardImage.src = `https://sbtatrot-backend.onrender.com/${data.card.image_path}`;
-        cardImage.alt = data.card.display_name;
-        
-        // Display metadata
-        displayMetadata(data.metadata);
-        
-        // Display meaning
-        cardMeaning.innerHTML = `
-            <strong>📖 ${data.context} Reading</strong>
-            <p>${data.meaning}</p>
-        `;
-        
-        cardDisplay.classList.remove('hidden');
-        statusDiv.textContent = `🎴 ${data.cards_remaining} cards remaining in deck.`;
-        
-        cardDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        
     } catch (error) {
-        statusDiv.textContent = `❌ Error: ${error.message}. Make sure the backend server is running.`;
+        statusDiv.textContent = `❌ The veil cannot be lifted: ${error.message}`;
         console.error('Draw error:', error);
     } finally {
         drawBtn.disabled = false;
-        drawBtn.innerHTML = '✨ Draw Card';
+        updateDrawButtonText();
     }
 });
 
@@ -109,7 +211,7 @@ resetBtn.addEventListener('click', async () => {
     try {
         resetBtn.disabled = true;
         resetBtn.innerHTML = '⏳ Resetting...';
-        statusDiv.textContent = '🔄 Resetting deck...';
+        statusDiv.textContent = '🔄 Returning the cards to the cosmic deck...';
         
         const response = await fetch(`${API_URL}/reset`, { 
             method: 'POST',
@@ -123,22 +225,48 @@ resetBtn.addEventListener('click', async () => {
         }
         
         const data = await response.json();
-        statusDiv.textContent = `🔄 Deck reset! ${data.cards_remaining} cards available.`;
-        cardDisplay.classList.add('hidden');
+        statusDiv.textContent = `🌟 The deck is whole again. ${data.cards_remaining} cards ready for guidance.`;
+        singleCardDisplay.classList.add('hidden');
+        threeCardDisplay.classList.add('hidden');
         
     } catch (error) {
-        statusDiv.textContent = `❌ Error: ${error.message}. Make sure the backend server is running.`;
+        statusDiv.textContent = `❌ Error in the cosmic flow: ${error.message}`;
         console.error('Reset error:', error);
     } finally {
         resetBtn.disabled = false;
-        resetBtn.innerHTML = '🔄 Reset';
+        resetBtn.innerHTML = '🔄 Reset Deck';
     }
 });
 
-// Display metadata function
-function displayMetadata(metadata) {
+// Display a single card
+function displayCard(data, elements, position) {
+    // Display card name
+    elements.name.textContent = data.card.display_name;
+    
+    // Display card image
+    elements.image.src = `https://sbtatrot-backend.onrender.com/${data.card.image_path}`;
+    elements.image.alt = data.card.display_name;
+    
+    // Display metadata
+    displayMetadata(data.metadata, elements.metadata);
+    
+    // Display meaning
+    elements.meaning.innerHTML = `
+        <strong>📖 ${data.context} Reading</strong>
+        <p>${data.meaning}</p>
+    `;
+    
+    // Handle image loading errors
+    elements.image.onerror = () => {
+        elements.image.alt = '⚠️ Image not found';
+        elements.image.style.border = '2px dashed #d4af37';
+    };
+}
+
+// Display metadata (Yes/No, +/-)
+function displayMetadata(metadata, metadataElement) {
     if (!metadata || Object.keys(metadata).length === 0) {
-        cardMetadata.innerHTML = '';
+        metadataElement.innerHTML = '';
         return;
     }
     
@@ -162,28 +290,18 @@ function displayMetadata(metadata) {
         `;
     }
     
-    cardMetadata.innerHTML = metadataHTML;
+    metadataElement.innerHTML = metadataHTML;
 }
 
-// Handle image loading errors
-cardImage.addEventListener('error', () => {
-    cardImage.alt = '⚠️ Image not found. Please check backend server.';
-    cardImage.style.border = '2px dashed #ccc';
-    cardImage.style.padding = '20px';
-    cardImage.style.minHeight = '300px';
-});
-
-// Check backend status on load
+// Check backend status
 async function checkBackendStatus() {
     try {
         const response = await fetch(`${API_URL}/status`);
         if (response.ok) {
-            console.log('✅ Backend connected successfully');
+            console.log('✨ Connected to the cosmic realm');
         }
     } catch (error) {
-        console.warn('⚠️ Backend not responding (may be sleeping):', error);
-        statusDiv.textContent = '⚠️ Backend starting up... First load takes ~30 seconds on free tier.';
+        console.warn('⚠️ The cosmic connection is weak:', error);
+        statusDiv.textContent = '⚠️ Awakening the cosmic forces... (First load takes ~30 seconds)';
     }
 }
-
-checkBackendStatus();
