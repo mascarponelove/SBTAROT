@@ -1,4 +1,4 @@
-// Configuration - UPDATE THIS with your Render backend URL
+// Configuration - Backend serves assets from root
 const API_URL = 'https://sbtatrot-backend.onrender.com/api';
 
 // DOM Elements
@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // Shuffle deck
 shuffleBtn.addEventListener('click', async () => {
     try {
-        // Disable button and show loading
         shuffleBtn.disabled = true;
         shuffleBtn.innerHTML = '🔄 Shuffling...';
         statusDiv.textContent = '🔄 Shuffling deck...';
@@ -42,10 +41,9 @@ shuffleBtn.addEventListener('click', async () => {
         cardDisplay.classList.add('hidden');
         
     } catch (error) {
-        statusDiv.textContent = `❌ Error: ${error.message}. Make sure the backend server is running.`;
+        statusDiv.textContent = `❌ Error: ${error.message}. Backend may be sleeping (first load takes 30 sec).`;
         console.error('Shuffle error:', error);
     } finally {
-        // Re-enable button
         shuffleBtn.disabled = false;
         shuffleBtn.innerHTML = '🎴 Shuffle Deck';
     }
@@ -56,7 +54,6 @@ drawBtn.addEventListener('click', async () => {
     try {
         const context = contextSelect.value;
         
-        // Disable button and show loading
         drawBtn.disabled = true;
         drawBtn.innerHTML = '⏳ Drawing...';
         statusDiv.textContent = '✨ Drawing your card...';
@@ -80,11 +77,11 @@ drawBtn.addEventListener('click', async () => {
         // Display card name
         cardName.textContent = data.card.display_name;
         
-        // Display card image
-        cardImage.src = `/${data.card.image_path}`;
+        // Display card image - Load from backend
+        cardImage.src = `https://sbtatrot-backend.onrender.com/${data.card.image_path}`;
         cardImage.alt = data.card.display_name;
         
-        // Display metadata (Yes/No, +/-)
+        // Display metadata
         displayMetadata(data.metadata);
         
         // Display meaning
@@ -93,18 +90,15 @@ drawBtn.addEventListener('click', async () => {
             <p>${data.meaning}</p>
         `;
         
-        // Show card display
         cardDisplay.classList.remove('hidden');
         statusDiv.textContent = `🎴 ${data.cards_remaining} cards remaining in deck.`;
         
-        // Scroll to card
         cardDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         
     } catch (error) {
         statusDiv.textContent = `❌ Error: ${error.message}. Make sure the backend server is running.`;
         console.error('Draw error:', error);
     } finally {
-        // Re-enable button
         drawBtn.disabled = false;
         drawBtn.innerHTML = '✨ Draw Card';
     }
@@ -113,7 +107,6 @@ drawBtn.addEventListener('click', async () => {
 // Reset deck
 resetBtn.addEventListener('click', async () => {
     try {
-        // Disable button and show loading
         resetBtn.disabled = true;
         resetBtn.innerHTML = '⏳ Resetting...';
         statusDiv.textContent = '🔄 Resetting deck...';
@@ -137,7 +130,6 @@ resetBtn.addEventListener('click', async () => {
         statusDiv.textContent = `❌ Error: ${error.message}. Make sure the backend server is running.`;
         console.error('Reset error:', error);
     } finally {
-        // Re-enable button
         resetBtn.disabled = false;
         resetBtn.innerHTML = '🔄 Reset';
     }
@@ -150,7 +142,6 @@ function displayMetadata(metadata) {
         return;
     }
     
-    // Display Yes/No and +/- if available
     let metadataHTML = '';
     
     if (metadata['Yes/No']) {
@@ -176,7 +167,7 @@ function displayMetadata(metadata) {
 
 // Handle image loading errors
 cardImage.addEventListener('error', () => {
-    cardImage.alt = '⚠️ Image not found. Please add card images to assets/images/';
+    cardImage.alt = '⚠️ Image not found. Please check backend server.';
     cardImage.style.border = '2px dashed #ccc';
     cardImage.style.padding = '20px';
     cardImage.style.minHeight = '300px';
@@ -190,10 +181,9 @@ async function checkBackendStatus() {
             console.log('✅ Backend connected successfully');
         }
     } catch (error) {
-        console.warn('⚠️ Backend not responding:', error);
-        statusDiv.textContent = '⚠️ Backend server not responding. Please wait or refresh the page.';
+        console.warn('⚠️ Backend not responding (may be sleeping):', error);
+        statusDiv.textContent = '⚠️ Backend starting up... First load takes ~30 seconds on free tier.';
     }
 }
 
-// Check status when page loads
 checkBackendStatus();
