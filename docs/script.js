@@ -1,15 +1,4 @@
-// Draw cards (1 or 3 based on selection)
-drawBtn.addEventListener('click', async () => {
-    try {
-        const context = contextSelect.value;
-        const isSingleCard = singleCardRadio.checked;
-        
-        drawBtn.disabled = true;
-        drawBtn.innerHTML = '⏳ Revealing...';
-        
-        if (isSingleCard) {
-            // Draw single card
-            statusDiv.textContent = '// Configuration
+// Configuration
 const API_URL = 'https://sbtatrot-backend.onrender.com/api';
 
 // DOM Elements
