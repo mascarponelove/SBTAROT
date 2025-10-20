@@ -1,18 +1,14 @@
 import os
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
-from tarot_deck import TarotDeck
+from backend.tarot_deck import TarotDeck
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../assets', static_url_path='/assets')
 
-# CORS Configuration - Update with your GitHub username
+# CORS Configuration
 CORS(app, resources={
-    r"/api/*": {
-        "origins": [
-            "http://localhost:5000",
-            "https://mascarponelove.github.io",
-            "https://sbtatrot-backend.onrender.com"
-        ]
+    r"/*": {
+        "origins": "*"
     }
 })
 
@@ -22,68 +18,80 @@ deck = TarotDeck(assets_path="assets")
 @app.route('/')
 def index():
     """Serve the HTML dashboard."""
-    return send_from_directory('frontend', 'index.html')
+    return send_from_directory('../frontend', 'index.html')
 
 @app.route('/<path:path>')
 def serve_static(path):
-    """Serve static files (CSS, JS)."""
-    return send_from_directory('frontend', path)
+    """Serve static files."""
+    try:
+        return send_from_directory('../frontend', path)
+    except:
+        return send_from_directory('../assets', path)
 
 @app.route('/assets/<path:path>')
 def serve_assets(path):
-    """Serve image and meaning files."""
-    return send_from_directory('assets', path)
+    """Serve asset files."""
+    return send_from_directory('../assets', path)
 
 @app.route('/api/shuffle', methods=['POST'])
 def shuffle():
-    """Shuffle the deck using Fisher-Yates algorithm."""
-    result = deck.shuffle()
-    return jsonify(result)
+    """Shuffle the deck."""
+    try:
+        result = deck.shuffle()
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/draw', methods=['POST'])
 def draw():
     """Draw a card with contextual interpretation."""
-    data = request.json
-    context = data.get('context', 'Soul')
-    
-    card = deck.draw_card()
-    if not card:
-        return jsonify({"error": "Deck is empty. Please shuffle to reset."}), 400
-    
-    # Extract meaning based on context
-    meaning = deck.extract_meaning(card, context)
-    
-    # Get additional card data (Yes/No, +/-, etc.)
-    card_metadata = deck.get_all_card_data(card)
-    
-    response = {
-        "card": card,
-        "meaning": meaning,
-        "context": context,
-        "cards_remaining": len(deck.current_deck),
-        "metadata": card_metadata  # Includes Yes/No, +/-, Card Name, etc.
-    }
-    
-    return jsonify(response)
+    try:
+        data = request.json or {}
+        context = data.get('context', 'Soul')
+        
+        card = deck.draw_card()
+        if not card:
+            return jsonify({"error": "Deck is empty. Please shuffle to reset."}), 400
+        
+        meaning = deck.extract_meaning(card, context)
+        card_metadata = deck.get_all_card_data(card)
+        
+        response = {
+            "card": card,
+            "meaning": meaning,
+            "context": context,
+            "cards_remaining": len(deck.current_deck),
+            "metadata": card_metadata
+        }
+        
+        return jsonify(response)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/reset', methods=['POST'])
 def reset():
-    """Reset the deck to full 78 cards."""
-    result = deck.reset()
-    return jsonify(result)
+    """Reset the deck."""
+    try:
+        result = deck.reset()
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/status', methods=['GET'])
 def status():
     """Get current deck status."""
-    return jsonify({
-        "cards_remaining": len(deck.current_deck),
-        "total_cards": len(deck.deck),
-        "status": "operational"
-    })
+    try:
+        return jsonify({
+            "cards_remaining": len(deck.current_deck),
+            "total_cards": len(deck.deck),
+            "status": "operational"
+        })
+    except Exception as e:
+        return jsonify({"error": str(e), "status": "error"}), 500
 
 @app.route('/api/health', methods=['GET'])
 def health():
-    """Health check endpoint for monitoring."""
+    """Health check."""
     return jsonify({
         "status": "healthy",
         "service": "SBTATROT Backend",
