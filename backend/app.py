@@ -1,11 +1,11 @@
 import os
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
-from backend.tarot_deck import TarotDeck
+from tarot_deck import TarotDeck
 
 app = Flask(__name__, static_folder='../assets', static_url_path='/assets')
 
-# CORS Configuration
+# CORS Configuration - Allow all origins
 CORS(app, resources={
     r"/*": {
         "origins": "*"
@@ -30,12 +30,12 @@ def serve_static(path):
 
 @app.route('/assets/<path:path>')
 def serve_assets(path):
-    """Serve asset files."""
+    """Serve asset files (images and meanings)."""
     return send_from_directory('../assets', path)
 
 @app.route('/api/shuffle', methods=['POST'])
 def shuffle():
-    """Shuffle the deck."""
+    """Shuffle the deck using Fisher-Yates algorithm."""
     try:
         result = deck.shuffle()
         return jsonify(result)
@@ -53,7 +53,10 @@ def draw():
         if not card:
             return jsonify({"error": "Deck is empty. Please shuffle to reset."}), 400
         
+        # Extract meaning based on context
         meaning = deck.extract_meaning(card, context)
+        
+        # Get additional card data (Yes/No, +/-, etc.)
         card_metadata = deck.get_all_card_data(card)
         
         response = {
@@ -70,7 +73,7 @@ def draw():
 
 @app.route('/api/reset', methods=['POST'])
 def reset():
-    """Reset the deck."""
+    """Reset the deck to full 78 cards."""
     try:
         result = deck.reset()
         return jsonify(result)
@@ -91,7 +94,7 @@ def status():
 
 @app.route('/api/health', methods=['GET'])
 def health():
-    """Health check."""
+    """Health check endpoint."""
     return jsonify({
         "status": "healthy",
         "service": "SBTATROT Backend",
