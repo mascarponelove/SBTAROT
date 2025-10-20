@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBTATROT - Tarot Card Reading</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔮 SBTATROT</h1>
+            <p class="subtitle">Rider-Waite-Smith Tarot Reading</p>
+        </header>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="context">Select Reading Context:</label>
+                <select id="context">
+                    <option value="General">General Guidance</option>
+                    <option value="Love">Love & Relationships</option>
+                    <option value="Career">Career & Profession</option>
+                    <option value="Finance">Finance & Wealth</option>
+                    <option value="Health">Health & Wellness</option>
+                    <option value="Spiritual">Spiritual Growth</option>
+                </select>
+            </div>
+            
+            <div class="button-group">
+                <button id="shuffleBtn" class="btn btn-primary">🎴 Shuffle Deck</button>
+                <button id="drawBtn" class="btn btn-secondary">✨ Draw Card</button>
+                <button id="resetBtn" class="btn btn-tertiary">🔄 Reset</button>
+            </div>
+        </div>
+        
+        <div id="status" class="status"></div>
+        
+        <div id="cardDisplay" class="card-display hidden">
+            <div class="card-container">
+                <h2 id="cardName" class="card-name"></h2>
+                <div class="card-image-wrapper">
+                    <img id="cardImage" alt="Tarot Card" class="card-image">
+                </div>
+                <div id="cardMeaning" class="meaning-box"></div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2025 SBTATROT | Rider-Waite-Smith Tarot Deck</p>
+        </footer>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
