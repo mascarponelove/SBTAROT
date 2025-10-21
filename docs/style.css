@@ -42,7 +42,7 @@ body::before {
 }
 
 .container {
-    max-width: 1400px;
+    max-width: 1000px;
     margin: 0 auto;
     background: rgba(15, 12, 41, 0.85);
     border-radius: 20px;
@@ -139,73 +139,6 @@ select:focus {
     outline: none;
     border-color: #f4d03f;
     box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
-}
-
-/* Spread Type Radio Options */
-.spread-options {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.radio-option {
-    flex: 1;
-    min-width: 200px;
-    padding: 15px 25px;
-    border: 2px solid rgba(212, 175, 55, 0.3);
-    border-radius: 10px;
-    background: rgba(30, 25, 60, 0.4);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.radio-option:hover {
-    border-color: rgba(212, 175, 55, 0.6);
-    background: rgba(30, 25, 60, 0.6);
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
-}
-
-.radio-option input[type="radio"] {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 2px solid #d4af37;
-    border-radius: 50%;
-    background: rgba(30, 25, 60, 0.8);
-    cursor: pointer;
-    position: relative;
-    transition: all 0.3s ease;
-}
-
-.radio-option input[type="radio"]:checked {
-    background: #d4af37;
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
-}
-
-.radio-option input[type="radio"]:checked::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #0f0c29;
-}
-
-.radio-label {
-    font-size: 1.1rem;
-    color: #f0e6d2;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-}
-
-.radio-option input[type="radio"]:checked ~ .radio-label {
-    color: #f4d03f;
 }
 
 .button-group {
@@ -358,9 +291,11 @@ select:focus {
     }
 }
 
-/* Card Spread Container */
+/* Card Display */
 .card-display {
     margin-top: 50px;
+    display: flex;
+    justify-content: center;
     animation: fadeIn 0.8s ease;
 }
 
@@ -368,45 +303,11 @@ select:focus {
     display: none;
 }
 
-/* Single Card Display */
-.single-display {
-    display: flex;
-    justify-content: center;
-}
-
-.single-card-container {
-    max-width: 500px;
-    width: 100%;
-}
-
-.single-card-container .card-position {
-    animation: cardReveal 0.8s ease;
-}
-
-.single-card-container .card-image {
-    max-width: 100%;
-    width: 350px;
-}
-
-/* Three Card Spread Container */
-.spread-container {
-    display: flex;
-    gap: 30px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 30px;
-}
-
 .card-position {
-    flex: 1;
-    min-width: 280px;
-    max-width: 380px;
+    max-width: 550px;
+    width: 100%;
     animation: cardReveal 0.8s ease;
 }
-
-.card-position:nth-child(1) { animation-delay: 0.2s; }
-.card-position:nth-child(2) { animation-delay: 0.4s; }
-.card-position:nth-child(3) { animation-delay: 0.6s; }
 
 @keyframes cardReveal {
     0% {
@@ -421,9 +322,9 @@ select:focus {
 
 .position-label {
     text-align: center;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     color: #d4af37;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     font-weight: 600;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -432,7 +333,7 @@ select:focus {
 .card-container {
     background: rgba(20, 17, 45, 0.8);
     border-radius: 15px;
-    padding: 25px;
+    padding: 30px;
     box-shadow: 
         0 10px 40px rgba(0, 0, 0, 0.5),
         0 0 30px rgba(212, 175, 55, 0.2);
@@ -452,13 +353,13 @@ select:focus {
     display: flex;
     gap: 15px;
     justify-content: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     flex-wrap: wrap;
 }
 
 .metadata-item {
     background: linear-gradient(135deg, rgba(107, 70, 193, 0.3) 0%, rgba(48, 43, 99, 0.3) 100%);
-    padding: 8px 16px;
+    padding: 10px 20px;
     border-radius: 8px;
     border-left: 3px solid #d4af37;
 }
@@ -466,23 +367,23 @@ select:focus {
 .metadata-label {
     font-weight: 700;
     color: #d4af37;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 .metadata-value {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: #f0e6d2;
     font-weight: 600;
-    margin-top: 3px;
+    margin-top: 5px;
 }
 
 .card-name {
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     color: #f4d03f;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     font-weight: 700;
     text-shadow: 0 0 15px rgba(244, 208, 63, 0.5);
 }
@@ -490,12 +391,12 @@ select:focus {
 .card-image-wrapper {
     display: flex;
     justify-content: center;
-    margin: 20px 0;
+    margin: 25px 0;
 }
 
 .card-image {
     max-width: 100%;
-    width: 250px;
+    width: 350px;
     height: auto;
     border-radius: 10px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
@@ -510,22 +411,22 @@ select:focus {
 
 .meaning-box {
     background: linear-gradient(135deg, rgba(107, 70, 193, 0.2) 0%, rgba(48, 43, 99, 0.2) 100%);
-    padding: 20px;
+    padding: 25px;
     border-radius: 10px;
     border-left: 4px solid #d4af37;
-    margin-top: 20px;
+    margin-top: 25px;
 }
 
 .meaning-box strong {
     display: block;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     color: #d4af37;
-    margin-bottom: 12px;
+    margin-bottom: 15px;
     letter-spacing: 1px;
 }
 
 .meaning-box p {
-    font-size: 1rem;
+    font-size: 1.05rem;
     line-height: 1.8;
     color: #e0d4b8;
     white-space: pre-wrap;
@@ -558,18 +459,6 @@ footer {
 }
 
 /* Responsive Design */
-@media (max-width: 968px) {
-    .spread-container {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .card-position {
-        max-width: 450px;
-        width: 100%;
-    }
-}
-
 @media (max-width: 768px) {
     .container {
         padding: 25px;
@@ -593,7 +482,7 @@ footer {
     }
     
     .card-image {
-        max-width: 220px;
+        max-width: 280px;
     }
 }
 
@@ -604,7 +493,7 @@ footer {
     }
     
     .card-name {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
     }
     
     .meaning-box {
@@ -612,7 +501,7 @@ footer {
     }
     
     .meaning-box strong {
-        font-size: 1rem;
+        font-size: 1.1rem;
     }
     
     .meaning-box p {
