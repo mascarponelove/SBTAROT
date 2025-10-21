@@ -6,7 +6,7 @@
     <title>SBTATROT - Mystical Tarot Reading</title>
     
     <!-- Meta Tags -->
-    <meta name="description" content="Mystical tarot readings with Past, Present, Future spreads and detailed interpretations.">
+    <meta name="description" content="Mystical tarot readings with detailed interpretations.">
     <meta property="og:title" content="SBTATROT - Mystical Tarot Reading">
     <meta property="og:description" content="Professional tarot readings with contextual interpretations">
     <meta property="og:type" content="website">
@@ -38,23 +38,9 @@
                 </select>
             </div>
             
-            <div class="control-group">
-                <label>✦ Select Reading Type ✦</label>
-                <div class="spread-options">
-                    <label class="radio-option">
-                        <input type="radio" name="spreadType" value="single" id="singleCard">
-                        <span class="radio-label">🎴 Single Card Reading</span>
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="spreadType" value="three" id="threeCard" checked>
-                        <span class="radio-label">🔮 Past-Present-Future Spread</span>
-                    </label>
-                </div>
-            </div>
-            
             <div class="button-group">
                 <button id="shuffleBtn" class="btn btn-primary">🎴 Shuffle Deck</button>
-                <button id="drawBtn" class="btn btn-secondary">✨ Draw Spread</button>
+                <button id="drawBtn" class="btn btn-secondary">✨ Draw Card</button>
                 <button id="resetBtn" class="btn btn-tertiary">🔄 Reset Deck</button>
             </div>
         </div>
@@ -73,62 +59,16 @@
         </div>
         
         <!-- Single Card Display -->
-        <div id="singleCardDisplay" class="card-display single-display hidden">
-            <div class="single-card-container">
-                <div class="card-position">
-                    <div class="position-label">✦ Your Card ✦</div>
-                    <div class="card-container">
-                        <div class="card-metadata" id="singleMetadata"></div>
-                        <h2 class="card-name" id="singleName"></h2>
-                        <div class="card-image-wrapper">
-                            <img id="singleImage" alt="Tarot Card" class="card-image">
-                        </div>
-                        <div class="meaning-box" id="singleMeaning"></div>
+        <div id="cardDisplay" class="card-display hidden">
+            <div class="card-position">
+                <div class="position-label">✦ Your Card ✦</div>
+                <div class="card-container">
+                    <div class="card-metadata" id="cardMetadata"></div>
+                    <h2 class="card-name" id="cardName"></h2>
+                    <div class="card-image-wrapper">
+                        <img id="cardImage" alt="Tarot Card" class="card-image">
                     </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 3 Card Spread Display -->
-        <div id="threeCardDisplay" class="card-display hidden">
-            <div class="spread-container">
-                <!-- Past Card -->
-                <div class="card-position" id="pastCard">
-                    <div class="position-label">✦ Past ✦</div>
-                    <div class="card-container">
-                        <div class="card-metadata" id="pastMetadata"></div>
-                        <h2 class="card-name" id="pastName"></h2>
-                        <div class="card-image-wrapper">
-                            <img id="pastImage" alt="Past Card" class="card-image">
-                        </div>
-                        <div class="meaning-box" id="pastMeaning"></div>
-                    </div>
-                </div>
-                
-                <!-- Present Card -->
-                <div class="card-position" id="presentCard">
-                    <div class="position-label">✦ Present ✦</div>
-                    <div class="card-container">
-                        <div class="card-metadata" id="presentMetadata"></div>
-                        <h2 class="card-name" id="presentName"></h2>
-                        <div class="card-image-wrapper">
-                            <img id="presentImage" alt="Present Card" class="card-image">
-                        </div>
-                        <div class="meaning-box" id="presentMeaning"></div>
-                    </div>
-                </div>
-                
-                <!-- Future Card -->
-                <div class="card-position" id="futureCard">
-                    <div class="position-label">✦ Future ✦</div>
-                    <div class="card-container">
-                        <div class="card-metadata" id="futureMetadata"></div>
-                        <h2 class="card-name" id="futureName"></h2>
-                        <div class="card-image-wrapper">
-                            <img id="futureImage" alt="Future Card" class="card-image">
-                        </div>
-                        <div class="meaning-box" id="futureMeaning"></div>
-                    </div>
+                    <div class="meaning-box" id="cardMeaning"></div>
                 </div>
             </div>
         </div>
